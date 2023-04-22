@@ -1,6 +1,7 @@
+import { FunctionComponent } from 'react';
 import './appHeader.scss';
 
-const AppHeader = () => {
+const AppHeader: FunctionComponent = () => {
     return (
         <header className="app__header">
             <h1 className="app__title">

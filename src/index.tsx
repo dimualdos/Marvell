@@ -1,29 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { App } from './components/app/App.js';
-
-import './index.css';
-
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
+import { App } from './components/app/app';
 import reportWebVitals from './reportWebVitals';
-import MarvelService from './services/MarvelService';
-
+import './index.css';
 import './style/style.scss';
 
-const marvelService = new MarvelService();
 
-marvelService.getAllCharacters().then(res => console.log(res));
-
-marvelService.getAllCharacters().then(res => {
-  const i = res.map((item: { name: string }) => item.name)
-  return console.log(i)
-});
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
+
   </React.StrictMode>
 );
 
