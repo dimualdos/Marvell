@@ -1,67 +1,30 @@
-import { useState, useEffect, FunctionComponent } from 'react';
+import { useEffect, FunctionComponent, useCallback } from 'react';
 import Spinner from '../spinner/spinner';
-import ErrorMessage from '../error-message/error-message';
-
-import MarvelService from '../../services/marvel-service';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
-import { IChar } from '../../types/types';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks/hooks';
+import { fetchRandomCharId } from '../../redux/marvel-slice';
 
 const RandomChar: FunctionComponent = () => {
-    const [char, setChar] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
 
-    const marvelService = new MarvelService();
-
+    const dispatch = useAppDispatch();
+    const { randomCharId } = useAppSelector(state => state.marvelDataCharacter)
     useEffect(() => {
         updateChar();
-        const timerId = setInterval(updateChar, 60000);
-
-        return () => {
-            clearInterval(timerId)
-        }
     }, [])
 
-    const onCharLoaded = (char: any) => {
-        if (!char.description) {
-            setChar({ ...char, description: 'На данного персонажа нет описания' })
-        } else if (char.description.length > 192) {
-            const str = char.description.slice(0, 192);
-            setChar({ ...char, description: `${str}...` })
-        }
-        setChar(char);
-        setLoading(false)
+    const updateChar = useCallback(() => {
+        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
 
-    }
+        dispatch(fetchRandomCharId(id));
 
-    const onError = () => {
-        setLoading(false)
-        setError(true)
-    }
-    const onCharLoading = () => {
-        setLoading(true);
-    }
-
-    const updateChar = () => {
-        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
-        onCharLoading();
-        marvelService
-            .getCharacter(id)
-            .then(onCharLoaded)
-            .catch(onError);
-    }
+    }, [dispatch])
 
 
-
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error) ? <View char={char!} /> : null;
     return (
         <div className="randomchar">
-            {errorMessage}
-            {spinner}
-            {content}
+
+            {randomCharId && randomCharId.id ? <View /> : <Spinner />}
             <div className="randomchar__static">
                 <p className="randomchar__title">
                     Random character for today!<br />
@@ -81,13 +44,18 @@ const RandomChar: FunctionComponent = () => {
 
 
 
-const View: FunctionComponent<{ char: IChar }> = ({ char }) => {
-    const { name, description, thumbnail, homepage, wiki } = char;
+const View: FunctionComponent = () => {
+    const { randomCharId } = useAppSelector(state => state.marvelDataCharacter);
+
+    const { name, description, thumbnail, urls } = randomCharId!;
+    const urlWiki = urls[1].url;
+    const homePage = urls[0].url;
+    const imgChar = `${thumbnail!.path}.${thumbnail!.extension}`;
     return (
         <div className="randomchar__block">
-            {thumbnail === "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg" ?
-                <img src={thumbnail} alt="Random character1" className="randomchar__img" style={{ objectFit: 'contain' }} /> :
-                <img src={thumbnail} alt={name} className="randomchar__img" />}
+            {imgChar === "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg" ?
+                <img src={imgChar} alt="Random character1" className="randomchar__img" style={{ objectFit: 'contain' }} /> :
+                <img src={imgChar} alt={name} className="randomchar__img" />}
 
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
@@ -95,10 +63,10 @@ const View: FunctionComponent<{ char: IChar }> = ({ char }) => {
                     {description}
                 </p>
                 <div className="randomchar__btns">
-                    <a href={homepage} className="button button__main">
+                    <a href={homePage} className="button button__main">
                         <div className="inner">homepage</div>
                     </a>
-                    <a href={wiki} className="button button__secondary">
+                    <a href={urlWiki} className="button button__secondary">
                         <div className="inner">Wiki</div>
                     </a>
                 </div>
