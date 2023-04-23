@@ -1,4 +1,6 @@
-
+export const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
+export const _apiKey = 'apikey=2867fe2936bcc2f28dd31ad94630b00b';
+export const _baseOffset = 210;
 
 class MarvelService {
     _apiBase = 'https://gateway.marvel.com:443/v1/public/';
@@ -13,8 +15,6 @@ class MarvelService {
         }
         return await res.json();
     }
-
-
 
     getAllCharacters = async (offset = this._baseOffset) => {
 

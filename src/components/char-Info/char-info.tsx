@@ -1,17 +1,18 @@
-import { useState, useEffect, FunctionComponent } from 'react';
-
-import MarvelService from '../../services/marvel-service';
+import { FunctionComponent } from 'react';
 import Spinner from '../spinner/spinner';
 import Skeleton from '../skeleton/skeleton';
-
-
+import { useAppSelector } from '../../redux/hooks/hooks';
 import './charInfo.scss';
-import { IChar } from '../../types/types';
 
-const View: FunctionComponent<{ char: IChar }> = ({ char }) => {
-    const { name, description, thumbnail, homepage, wiki, comics } = char;
+const View: FunctionComponent = () => {
+    const { charId } = useAppSelector(state => state.marvelDataCharacter);
 
+    const { name, description, thumbnail, urls, comics } = charId;
+    const imgChar = `${thumbnail.path}.${thumbnail.extension}`;
     let imgStyle: string | number | {} = { 'objectFit': 'cover' };
+
+    const urlWiki = urls[1].url;
+    const homePage = urls[0].url;
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = { 'objectFit': 'contain' };
     }
@@ -19,14 +20,14 @@ const View: FunctionComponent<{ char: IChar }> = ({ char }) => {
     return (
         <>
             <div className="char__basics">
-                <img src={thumbnail} alt={name} style={imgStyle} />
+                <img src={imgChar} alt={name} style={imgStyle} />
                 <div>
                     <div className="char__info-name">{name}</div>
                     <div className="char__btns">
-                        <a href={homepage} className="button button__main">
+                        <a href={homePage} className="button button__main">
                             <div className="inner">homepage</div>
                         </a>
-                        <a href={wiki} className="button button__secondary">
+                        <a href={urlWiki} className="button button__secondary">
                             <div className="inner">Wiki</div>
                         </a>
                     </div>
@@ -37,9 +38,9 @@ const View: FunctionComponent<{ char: IChar }> = ({ char }) => {
             </div>
             <div className="char__comics">Comics:</div>
             <ul className="char__comics-list">
-                {comics.length > 0 ? null : 'Нет комикосв с этим персонажем'}
+                {comics && comics.items.length > 0 ? null : 'Нет комиксов с этим персонажем'}
                 {
-                    comics.map((item: { name: string }, i: number) => {
+                    comics && comics.items.map((item: { name: string }, i: number) => {
                         // eslint-disable-next-line
                         if (i > 9) return;
                         return (
@@ -54,49 +55,15 @@ const View: FunctionComponent<{ char: IChar }> = ({ char }) => {
     )
 }
 
-
-const CharInfo: FunctionComponent<{ charId: number }> = (props) => {
-    const [char, setChar] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
-
-    const marvelService = new MarvelService();
-
-    useEffect(() => {
-        updateChar();
-        setLoading(false);
-    }, [props.charId]);
-
-    const updateChar = () => {
-        const { charId } = props;
-        if (!charId) {
-            return;
-        }
-
-        marvelService
-            .getCharacter(charId)
-            .then(onCharLoaded)
-            .catch(onError);
-    }
-
-    const onCharLoaded = (char: any) => {
-        setLoading(false);
-        setChar(char);
-    }
-
-    const onError = () => {
-        setError(true);
-        setLoading(false);
-    }
-
+const CharInfo: FunctionComponent = () => {
+    const { charId, status } = useAppSelector(state => state.marvelDataCharacter);
     return (
         <>
-            {!char && loading ? <Spinner /> : (<div className="char__info">
-                {char ? <View char={char} /> : <Skeleton />}
+            {!charId && status === 'loading' ? <Spinner /> : (<div className="char__info">
+                {charId.name ? <View /> : <Skeleton />}
             </div>)}
         </>
     )
-
 }
 
 export default CharInfo;

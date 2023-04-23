@@ -8,3 +8,11 @@ export interface IChar {
     comics: any,
     id?: number
 }
+
+export interface IComics {
+    id: any;
+    name: any;
+    description: string | any[];
+    thumbnail: { path: string; extension: string; };
+    urls: { url: any; }[]; comics: { items: any; };
+}
