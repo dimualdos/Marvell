@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { rootReducer } from './root-reducer';
+import { marvelApi } from './marvel-api';
 
 
 export const store = configureStore({
     reducer: rootReducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(marvelApi.middleware),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

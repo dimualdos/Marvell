@@ -53,8 +53,8 @@ const CharList: FunctionComponent = () => {
 
     // Этот метод создан для оптимизации, 
     // чтобы не помещать такую конструкцию в метод render
-    const renderItems = (arr: any) => {
-        const items = arr!.map((item: IChar, i: number) => {
+    const renderItems = (charItems: any) => {
+        const items = charItems!.map((item: IChar, i: number) => {
             let imgStyle = { 'objectFit': 'cover' };
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
                 imgStyle = { 'objectFit': 'unset' };
@@ -87,10 +87,9 @@ const CharList: FunctionComponent = () => {
         )
     }
 
-    const items = renderItems(charItems!);
     return (
         <div className="char__list">
-            {status === 'rejected' ? <ErrorMessage /> : (charItems.length > 0 ? items : <Spinner />)}
+            {status === 'rejected' ? <ErrorMessage /> : (charItems.length > 0 ? renderItems(charItems) : <Spinner />)}
             <button
                 className="button button__main button__long"
                 disabled={newItemLoading}

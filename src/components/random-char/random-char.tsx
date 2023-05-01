@@ -4,8 +4,11 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks/hooks';
 import { fetchRandomCharId } from '../../redux/marvel-slice';
+import { useMarvelGetCharacterIdQuery } from '../../redux/marvel-api';
 
 const RandomChar: FunctionComponent = () => {
+    const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+    const marvelID = useMarvelGetCharacterIdQuery(id);
 
     const dispatch = useAppDispatch();
     const { randomCharId } = useAppSelector(state => state.marvelDataCharacter)
@@ -16,7 +19,7 @@ const RandomChar: FunctionComponent = () => {
     const updateChar = useCallback(() => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
 
-        dispatch(fetchRandomCharId(id));
+        //  dispatch(fetchRandomCharId(id));
 
     }, [dispatch])
 
@@ -33,7 +36,7 @@ const RandomChar: FunctionComponent = () => {
                 <p className="randomchar__title">
                     Or choose another one
                 </p>
-                <button onClick={updateChar} className="button button__main">
+                <button onClick={() => marvelID} className="button button__main">
                     <div className="inner">try it</div>
                 </button>
                 <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
@@ -45,6 +48,7 @@ const RandomChar: FunctionComponent = () => {
 
 
 const View: FunctionComponent = () => {
+
     const { randomCharId } = useAppSelector(state => state.marvelDataCharacter);
 
     const { name, description, thumbnail, urls } = randomCharId!;
