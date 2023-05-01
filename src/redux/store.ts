@@ -1,13 +1,20 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { rootReducer } from './root-reducer';
+<<<<<<< HEAD
 import { setupListeners } from '@reduxjs/toolkit/query'
+=======
+>>>>>>> efe0860 (начало)
 import { marvelApi } from './marvel-api';
 
 
 export const store = configureStore({
     reducer: rootReducer,
+<<<<<<< HEAD
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(marvelApi.middleware),
+=======
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(marvelApi.middleware),
+>>>>>>> efe0860 (начало)
 });
 setupListeners(store.dispatch);
 

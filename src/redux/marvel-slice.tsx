@@ -109,19 +109,31 @@ const setError = (state: { status: string; error: any; }, action: { payload: any
 }
 
 interface ICharReduser {
+<<<<<<< HEAD
     charItemsData: IChar[],
     allComics: IComics[],
     charId: IChar,
     randomCharId: IChar,
+=======
+    charItems: any,
+    charId: any,
+    randomCharId: any,
+>>>>>>> efe0860 (начало)
     status: string,
     error: boolean | string
 }
 
 export const initialState: ICharReduser = {
+<<<<<<< HEAD
     charItemsData: [],
     allComics: [],
     charId: { urls: [] },
     randomCharId: { urls: [] },
+=======
+    charItems: [],
+    charId: {},
+    randomCharId: {},
+>>>>>>> efe0860 (начало)
     status: '',
     error: false
 }
