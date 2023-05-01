@@ -77,7 +77,7 @@ const setError = (state: { status: string; error: any; }, action: { payload: any
     state.error = action.payload;
 }
 
-interface ITaskReduser {
+interface ICharReduser {
     charItems: any,
     charId: any,
     randomCharId: any,
@@ -85,7 +85,7 @@ interface ITaskReduser {
     error: boolean | string
 }
 
-export const initialState: ITaskReduser = {
+export const initialState: ICharReduser = {
     charItems: [],
     charId: {},
     randomCharId: {},
