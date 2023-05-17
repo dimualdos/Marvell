@@ -42,18 +42,12 @@ const CharList: FunctionComponent = () => {
         setOffset(offset => offset + 9);
         setCharEnded(ended);
         dispatch(fetchMarvel(offset));
-    }, [charItemsData.length, dispatch, offset]);
+    }, [charItems.length, dispatch, offset])
 
-    const renderItems = (charItems: IChar[]) => {
-        const items = charItems!.map((item: IChar, i: number) => {
-
-<<<<<<< HEAD
-=======
     // Этот метод создан для оптимизации, 
     // чтобы не помещать такую конструкцию в метод render
     const renderItems = (charItems: any) => {
         const items = charItems!.map((item: IChar, i: number) => {
->>>>>>> efe0860 (начало)
             let imgStyle = { 'objectFit': 'cover' };
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
                 imgStyle = { 'objectFit': 'unset' };
@@ -88,11 +82,7 @@ const CharList: FunctionComponent = () => {
 
     return (
         <div className="char__list">
-<<<<<<< HEAD
-            {status === 'rejected' ? <ErrorMessage /> : (charItemsData.length > 0 ? renderItems(charItemsData) : <Spinner />)}
-=======
             {status === 'rejected' ? <ErrorMessage /> : (charItems.length > 0 ? renderItems(charItems) : <Spinner />)}
->>>>>>> efe0860 (начало)
             <button
                 className="button button__main button__long"
                 disabled={newItemLoading}
