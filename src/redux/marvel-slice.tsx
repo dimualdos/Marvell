@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { _apiBase, _apiKey } from '../services/marvel-service';
-import { IComics } from '../types/types';
+import { IAllComicsList, IChar, IComics } from '../types/types';
 
 const _transformCharacter = (char: IComics) => {
     return {
@@ -14,6 +14,22 @@ const _transformCharacter = (char: IComics) => {
     }
 }
 
+const _transformComics = (comics: IAllComicsList) => {
+    return {
+        id: comics.id,
+        title: comics.title,
+        description: comics.description || "There is no description",
+        pageCount: comics.pageCount
+            ? `${comics.pageCount} p.`
+            : "No information about the number of pages",
+        thumbnail: comics.thumbnail.path + "." + comics.thumbnail.extension,
+        language: comics.textObjects[0]?.language || "en-us",
+        price: comics.prices[0].price
+            ? `${comics.prices[0].price}$`
+            : "not available",
+    };
+};
+
 export const fetchMarvel = createAsyncThunk(
     'charItems/fetchMarvel',
     async function (offset: number, { rejectWithValue }) {
@@ -24,7 +40,7 @@ export const fetchMarvel = createAsyncThunk(
             }
             const res = await response.json();
             const data = res.data.results.map(_transformCharacter);
-            console.log(data);
+            // console.log(data);
             return data;
         } catch (error: any) {
             return rejectWithValue(error.message);
@@ -32,7 +48,22 @@ export const fetchMarvel = createAsyncThunk(
     }
 );
 
-
+export const fetchAllComics = createAsyncThunk(
+    'charItems/fetchAllComics',
+    async function (offset: number, { rejectWithValue }) {
+        try {
+            const response = await fetch(`${_apiBase}comics?orderBy=issueNumber&limit=8&offset=${offset}&${_apiKey}`);
+            if (!response.ok) {
+                throw new Error('Server Error!');
+            }
+            const res = await response.json();
+            const data = res.data.results.map(_transformComics);
+            return data;
+        } catch (error: any) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
 
 export const fetchCharacterId: any = createAsyncThunk(
     'charItems/fetchCharacterId',
@@ -44,7 +75,7 @@ export const fetchCharacterId: any = createAsyncThunk(
             }
             const res = await response.json();
             const data = res.data.results[0];
-            console.log(data);
+            // console.log(data);
 
             return data;
         } catch (error: any) {
@@ -63,7 +94,7 @@ export const fetchRandomCharId: any = createAsyncThunk(
             }
             const res = await response.json();
             const data = res.data.results[0];
-            console.log(data);
+            // console.log(data);
 
             return data;
         } catch (error: any) {
@@ -78,17 +109,19 @@ const setError = (state: { status: string; error: any; }, action: { payload: any
 }
 
 interface ICharReduser {
-    charItems: any,
-    charId: any,
-    randomCharId: any,
+    charItemsData: IChar[],
+    allComics: IComics[],
+    charId: IChar,
+    randomCharId: IChar,
     status: string,
     error: boolean | string
 }
 
 export const initialState: ICharReduser = {
-    charItems: [],
-    charId: {},
-    randomCharId: {},
+    charItemsData: [],
+    allComics: [],
+    charId: { urls: [] },
+    randomCharId: { urls: [] },
     status: '',
     error: false
 }
@@ -96,11 +129,7 @@ export const initialState: ICharReduser = {
 const marvelSliceReduser = createSlice({
     name: 'charItems',
     initialState,
-    reducers: {
-        // fetchMarvel(state, action) {
-        //     state.charItems.push(action.payload);
-        // }
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(fetchMarvel.pending, (state) => {
@@ -109,9 +138,10 @@ const marvelSliceReduser = createSlice({
             })
             .addCase(fetchMarvel.fulfilled, (state, action) => {
                 state.status = 'resolved';
-                state.charItems.push(...action.payload);
+                state.charItemsData.push(...action.payload);
             })
             .addCase(fetchMarvel.rejected, setError)
+
             .addCase(fetchCharacterId.pending, (state) => {
                 state.status = 'loading';
                 state.error = false;
@@ -121,6 +151,7 @@ const marvelSliceReduser = createSlice({
                 state.charId = action.payload;
             })
             .addCase(fetchCharacterId.rejected, setError)
+
             .addCase(fetchRandomCharId.pending, (state) => {
                 state.status = 'loading';
                 state.error = false;
@@ -130,6 +161,15 @@ const marvelSliceReduser = createSlice({
                 state.randomCharId = action.payload;
             })
             .addCase(fetchRandomCharId.rejected, setError)
+            .addCase(fetchAllComics.pending, (state) => {
+                state.status = 'loading';
+                state.error = false;
+            })
+            .addCase(fetchAllComics.fulfilled, (state, action) => {
+                state.status = 'resolved';
+                state.allComics.push(...action.payload);
+            })
+            .addCase(fetchAllComics.rejected, setError)
     },
 });
 

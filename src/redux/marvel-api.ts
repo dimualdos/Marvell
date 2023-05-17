@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { IComics } from '../types/types';
+import { IComics, IComicsList } from '../types/types';
 import { _apiKey, _baseOffset } from '../services/marvel-service';
 
 const _transformCharacter = (char: IComics) => {
@@ -15,16 +15,18 @@ const _transformCharacter = (char: IComics) => {
   }
 }
 
+const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+
 // Define a service using a base URL and expected endpoints
 export const marvelApi = createApi({
   reducerPath: 'marvelApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://gateway.marvel.com:443/v1/public/' }),
   endpoints: (builder) => ({
-    marvelGetAllComics: builder.query({
-      query: () => `characters?limit=9&offset=${_baseOffset}&${'_apiKey'}`,
+    marvelGetAllComics: builder.query<IComicsList, void>({
+      query: () => `characters?limit=9&offset=${_baseOffset}&${_apiKey}`,
     }),
-    marvelGetCharacterId: builder.query({
-      query: (id: number) => `characters/${id}?${_apiKey}`
+    marvelGetCharacterId: builder.query<IComics, number>({
+      query: (id) => `characters/${id}?${_apiKey}`
     })
   }),
 })
