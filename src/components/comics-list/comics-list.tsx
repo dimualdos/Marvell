@@ -14,9 +14,9 @@ const ComicsList: FunctionComponent = () => {
 
     const dispatch = useAppDispatch();
 
-    // const { allComics, status, error }
     useEffect(() => {
-        onRequest(offset, true);
+        onRequest(offset);
+
     }, []);
 
     const onRequest = (offset: number, initial?: boolean | undefined) => {
@@ -27,16 +27,16 @@ const ComicsList: FunctionComponent = () => {
 
     const onComicsListLoaded = () => {
         let ended = false;
-        if (allComics.length < 8) {
+        if (allComics && allComics.length > 0 && allComics.length % 8 === 0 && allComics.length < allComics!.length) {
             ended = true;
         }
         setnewItemLoading(false);
-        setOffset(offset + 8);
+        setOffset(offset => offset + 8);
         setComicsEnded(ended);
     }
 
     function renderItems(arr: any[]) {
-        const items = arr.map((item: { thumbnail: string; title: string; price: string | number }, i: Key) => {
+        const items = arr && arr.map((item: { thumbnail: string; title: string; price: string | number }, i: Key) => {
             return (
                 <li className="comics__item" key={i}>
                     <a href="#">
@@ -57,7 +57,7 @@ const ComicsList: FunctionComponent = () => {
         )
     }
 
-    const items = renderItems(allComics);
+    const items = renderItems(allComics!);
 
     const errorMessage = error ? <ErrorMessage /> : null;
     const spinner = status === 'loading' && !newItemLoading ? <Spinner /> : null;
@@ -69,7 +69,7 @@ const ComicsList: FunctionComponent = () => {
             {items}
             <button
                 disabled={newItemLoading}
-                style={{ 'display': comicsEnded ? 'none' : 'block' }}
+                style={{ 'display': comicsEnded === true ? 'none' : 'block' }}
                 className="button button__main button__long"
                 onClick={() => onRequest(offset)}>
                 <div className="inner">load more</div>
