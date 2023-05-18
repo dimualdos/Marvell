@@ -58,6 +58,7 @@ export const fetchAllComics = createAsyncThunk(
             }
             const res = await response.json();
             const data = res.data.results.map(_transformComics);
+            // console.log(data);
             return data;
         } catch (error: any) {
             return rejectWithValue(error.message);
