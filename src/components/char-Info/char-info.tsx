@@ -12,6 +12,7 @@ const View: FunctionComponent = () => {
     let imgStyle: string | number | {} = { 'objectFit': 'cover' };
 
     const urlWiki = urls[1].url;
+
     const homePage = urls[0].url;
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = { 'objectFit': 'contain' };

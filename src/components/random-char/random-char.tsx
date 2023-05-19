@@ -4,20 +4,22 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks/hooks';
 import { fetchRandomCharId } from '../../redux/marvel-slice';
+import { useMarvelGetAllComicsQuery, useMarvelGetCharacterIdQuery } from '../../redux/marvel-api';
 
 const RandomChar: FunctionComponent = () => {
 
+
     const dispatch = useAppDispatch();
-    const { randomCharId } = useAppSelector(state => state.marvelDataCharacter)
+    const { randomCharId } = useAppSelector(state => state.marvelDataCharacter);
+    const { data, error, isLoading } = useMarvelGetAllComicsQuery();
+
     useEffect(() => {
         updateChar();
     }, [])
 
     const updateChar = useCallback(() => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-
         dispatch(fetchRandomCharId(id));
-
     }, [dispatch])
 
 
@@ -45,6 +47,7 @@ const RandomChar: FunctionComponent = () => {
 
 
 const View: FunctionComponent = () => {
+
     const { randomCharId } = useAppSelector(state => state.marvelDataCharacter);
 
     const { name, description, thumbnail, urls } = randomCharId!;
